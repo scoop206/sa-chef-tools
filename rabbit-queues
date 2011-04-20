@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+
+args="${*:-name messages messages_unacknowledged}"
+sa-ssh -1 rabbitmq 'sudo rabbitmqctl -q list_queues -p "$(sudo rabbitmqctl -q list_vhosts | grep production | head -1)" '"$args"' | sort | column -t'

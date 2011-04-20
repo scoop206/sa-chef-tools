@@ -1,0 +1,11 @@
+#!/bin/sh
+
+export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+
+creds="${DROPBOX_DIR:-$HOME/Dropbox}/Sonian Dev Ops/credentials.org"
+keys="$(awk "tolower(\$4) == \"$ENV\" { print \$6, \$8 }" "$creds")"
+
+export AWS_ACCESS_KEY_ID="${keys% *}"
+export AWS_SECRET_ACCESS_KEY="${keys#* }"
+
+exec aws "$@"

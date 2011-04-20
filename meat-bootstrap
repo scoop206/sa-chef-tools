@@ -1,0 +1,7 @@
+#!/bin/sh
+
+export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+
+while read inst hostname; do
+    knife bootstrap "$h" -r "$1" --sudo -x ubuntu -i "../keys/$ENV.pem" -d ubuntu10.04-gems -N "$id"
+done

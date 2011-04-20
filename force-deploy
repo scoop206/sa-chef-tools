@@ -1,0 +1,12 @@
+#!/bin/sh
+
+export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+
+case "$1" in
+    add|remove) ;;
+    *) echo "usage: force-deploy {add|remove}" 1>&2; exit 2;;
+esac
+
+for inst in $(knife node search 'role:*webserver' -i); do
+    knife node run_list "$1" $inst 'role[force_deploy]'
+done

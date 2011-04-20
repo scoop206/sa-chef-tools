@@ -1,0 +1,86 @@
+#!/bin/sh
+
+export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+
+while getopts 1Aak:s opt; do
+    case $opt in
+        [0-9]*|a|s) n="$opt";;
+        A) n=a; query='*:*';;
+        k) knifeopts="$OPTARG";;
+    esac
+done
+shift $(($OPTIND - 1))
+
+if [ -z "$query" ]; then
+    case "$1" in
+        domU-*|ip-*) query="hostname:$1";;
+        i-*) query="name:$1";;
+        lb) query='role:load_balancer';;
+        mon|monitor|nagios) query='role:monitoring_server';;
+        ws|web|website) query='role:webserver';;
+        es|elastic|elasticsearch) query='role:elasticsearch_ebs';;
+        rabbit|amqp) query='role:rabbitmq';;
+        gs|gluster) query='role:gluster_server';;
+        worker) query='role:safe_worker';;
+        bg) query='role:safe_background_worker';;
+        nsf) query='role:safe_nsf';;
+        nfs) query='role:nfs_server';;
+        *:*) query="$1";;
+        "") echo 'usage: [ENV=org] sa-ssh [-a] ROLE_OR_QUERY ARGS...' 1>&2; exit 2;;
+        *) query="role:$1";;
+    esac
+    shift
+fi
+
+title() {
+    printf "\033]0;$*\007"
+}
+
+title_exec() {
+    title "sa-ssh: $query on $org"
+    rm -f "$tmpfile"
+    exec "$@"
+}
+
+tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
+trap "rm -f '$tmpfile'" EXIT
+
+if knife search node "$query" -a ec2.public_hostname -i >"$tmpfile" 2>/dev/null; then
+    case "$(grep -c . "$tmpfile")" in
+        0)
+            echo 'Error: no nodes found'
+            exit 1
+            ;;
+        1)
+            title_exec ssh "$(cat "$tmpfile")" "$@"
+            ;;
+        *)
+            if [ -z "$n" ]; then
+                nl "$tmpfile"
+                printf 'Node number, [a]ll, or [s]equential >> '; read n
+            fi
+            case "$n" in
+                [0-9]*)
+                    title_exec ssh "$(sed -n "${n}p" "$tmpfile")" "$@"
+                    ;;
+                s|sequential)
+                    for h in $(cat $tmpfile); do
+                        title "sa-ssh: $query on $org"
+                        ssh "$h" "$@"
+                    done
+                    ;;
+                a|all|"")
+                    title_exec knife ssh $knifeopts "$query" -a ec2.public_hostname \
+                        "${*:-interactive}"
+                    ;;
+                *)
+                    echo "Error: no node numbered '$n'"
+                    exit 3
+                    ;;
+            esac
+            ;;
+    esac
+else
+    echo 'Error: knife query failed'
+    exit 1
+fi
