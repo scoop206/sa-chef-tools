@@ -2,9 +2,9 @@
 
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
-knife cookbook upload $(
-    git diff --name-only "$1" | grep ^cookbooks | cut -d/ -f2 | sort -u
-)
+for c in $(git diff --name-only "$1" | grep ^cookbooks | cut -d/ -f2 | sort -u); do
+    knife cookbook upload "$c"
+done
 
 for f in $(git diff --name-only "$1" | grep ^roles | sort -u); do
     knife role from file "$f"
