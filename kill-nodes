@@ -3,7 +3,11 @@
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
 for inst in "$@"; do
-    knife ec2 server delete -y "$inst"
-    knife node delete -y "$inst"
-    knife client delete -y "$inst"
+    if [ -n "$(knife search node "name:$inst" -i)" ]; then
+        knife ec2 server delete -y "$inst"
+        knife node delete -y "$inst"
+        knife client delete -y "$inst"
+    else
+        sa-aws tin "$inst"
+    fi
 done
