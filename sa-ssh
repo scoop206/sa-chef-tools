@@ -37,7 +37,7 @@ title() {
 }
 
 title_exec() {
-    title "sa-ssh: $query on $org"
+    title "sa-ssh: $query on $ENV"
     rm -f "$tmpfile"
     exec "$@"
 }
@@ -65,7 +65,7 @@ if knife search node "$query" -a ec2.public_hostname -i >"$tmpfile" 2>/dev/null;
                     ;;
                 s|sequential)
                     for h in $(cat $tmpfile); do
-                        title "sa-ssh: $query on $org"
+                        title "sa-ssh: $query on $ENV"
                         ssh "$h" "$@"
                     done
                     ;;
