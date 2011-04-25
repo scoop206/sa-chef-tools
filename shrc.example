@@ -1,0 +1,5 @@
+#!/bin/sh
+
+en() { orgs="$1"; shift; for org in ${orgs//,/ }; do ENV="$org" "$@"; done }
+
+wb() { git branch -a | grep "$*" | sed 's,remotes/,,'; }

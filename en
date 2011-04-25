@@ -1,8 +1,0 @@
-#!/bin/sh
-
-orgs="$1"; shift
-IFS=','
-
-for org in $orgs; do
-    ENV="$org" "$@"
-done
