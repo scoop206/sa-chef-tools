@@ -7,6 +7,6 @@ case "$1" in
     *) echo "usage: force-deploy {add|remove}" 1>&2; exit 2;;
 esac
 
-for inst in $(knife node search 'role:*webserver' -i); do
+for inst in $(knife search node 'role:*webserver' -i); do
     knife node run_list "$1" $inst 'role[force_deploy]'
 done
