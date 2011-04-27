@@ -45,7 +45,7 @@ title_exec() {
 tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
 trap "rm -f '$tmpfile'" EXIT
 
-if knife search node "$query" -a ec2.public_hostname -i >"$tmpfile" 2>/dev/null; then
+if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/dev/null; then
     case "$(grep -c . "$tmpfile")" in
         0)
             echo 'Error: no nodes found'
