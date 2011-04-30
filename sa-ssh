@@ -5,7 +5,7 @@ export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 while getopts 123456789Aak:s opt; do
     case $opt in
         [1-9]|a|s) n="$opt";;
-        A) n=a; query='*:*';;
+        A) n="${n:-all}"; query='*:*';;
         k) knifeopts="$OPTARG";;
     esac
 done
