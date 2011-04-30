@@ -36,12 +36,7 @@ title() {
     printf "\033]0;$*\007"
 }
 
-title_exec() {
-    title "sa-ssh: $query on $ENV"
-    rm -f "$tmpfile"
-    exec "$@"
-}
-
+title "sa-ssh: $query on $ENV"
 tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
 trap "rm -f '$tmpfile'" EXIT
 
@@ -52,7 +47,7 @@ if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/de
             exit 1
             ;;
         1)
-            title_exec ssh "$(cat "$tmpfile")" "$@"
+            ssh "$(cat "$tmpfile")" "$@"
             ;;
         *)
             if [ -z "$n" ]; then
@@ -61,16 +56,15 @@ if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/de
             fi
             case "$n" in
                 [0-9]*)
-                    title_exec ssh "$(sed -n "${n}p" "$tmpfile")" "$@"
+                    ssh "$(sed -n "${n}p" "$tmpfile")" "$@"
                     ;;
                 s|sequential)
                     for h in $(cat $tmpfile); do
-                        title "sa-ssh: $query on $ENV"
                         ssh "$h" "$@"
                     done
                     ;;
                 a|all|"")
-                    title_exec knife ssh $knifeopts "$query" -a ec2.public_hostname \
+                    knife ssh $knifeopts "$query" -a ec2.public_hostname \
                         "${*:-interactive}"
                     ;;
                 *)
