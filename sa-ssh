@@ -51,38 +51,31 @@ trap "rm -f '$tmpfile'" EXIT
 
 if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/dev/null; then
     case "$(grep -c . "$tmpfile")" in
-        0)
-            echo 'Error: no nodes found'
-            exit 1
+        0) echo 'Error: no nodes found'; exit 1;;
+        1) n="${n:-1}";;
+    esac
+    if [ -z "$n" ]; then
+        nl "$tmpfile"
+        printf 'Node number, [a]ll, or [s]equential >> '; read n
+    fi
+    case "$n" in
+        [0-9]*)
+            vssh "$(sed -n "${n}p" "$tmpfile")" "$@"
             ;;
-        1)
-            vssh "$(cat "$tmpfile")" "$@"
+        a|all|"")
+            knife ssh $knifeopts "$query" -a ec2.public_hostname "${*:-interactive}"
+            ;;
+        list)
+            cat "$tmpfile"
+            ;;
+        s|sequential)
+            for h in $(cat "$tmpfile"); do
+                vssh "$h" "$@"
+            done
             ;;
         *)
-            if [ -z "$n" ]; then
-                nl "$tmpfile"
-                printf 'Node number, [a]ll, or [s]equential >> '; read n
-            fi
-            case "$n" in
-                [0-9]*)
-                    vssh "$(sed -n "${n}p" "$tmpfile")" "$@"
-                    ;;
-                a|all|"")
-                    knife ssh $knifeopts "$query" -a ec2.public_hostname "${*:-interactive}"
-                    ;;
-                list)
-                    cat "$tmpfile"
-                    ;;
-                s|sequential)
-                    for h in $(cat "$tmpfile"); do
-                        vssh "$h" "$@"
-                    done
-                    ;;
-                *)
-                    echo "Error: no node numbered '$n'"
-                    exit 3
-                    ;;
-            esac
+            echo "Error: no node numbered '$n'"
+            exit 3
             ;;
     esac
 else
