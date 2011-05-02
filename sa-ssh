@@ -30,7 +30,7 @@ if [ -z "$query" ]; then
         nsf) query='role:safe_nsf';;
         nfs) query='role:nfs_server';;
         *:*) query="$1";;
-        "") echo 'usage: [ENV=org] sa-ssh [-a] ROLE_OR_QUERY ARGS...' 1>&2; exit 2;;
+        "") echo 'usage: [ENV=org] sa-ssh [-a] QUERY ARGS...' 1>&2; exit 2;;
         *) query="role:$1";;
     esac
     shift
@@ -38,6 +38,14 @@ fi
 
 title() {
     printf "\033]0;$*\007"
+}
+
+knifeq() {
+    knife search node "$1" -a ec2.public_hostname -i | sort
+}
+
+knifessh() {
+    knife ssh $knifeopts "$1" -a ec2.public_hostname "$2"
 }
 
 vssh() {
@@ -49,7 +57,7 @@ title "sa-ssh: $query on $ENV"
 tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
 trap "rm -f '$tmpfile'" EXIT
 
-if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/dev/null; then
+if knifeq "$query" >"$tmpfile" 2>/dev/null; then
     case "$(grep -c . "$tmpfile")" in
         0) echo 'Error: no nodes found'; exit 1;;
         1) n="${n:-1}";;
@@ -63,7 +71,7 @@ if knife search node "$query" -a ec2.public_hostname -i | sort >"$tmpfile" 2>/de
             vssh "$(sed -n "${n}p" "$tmpfile")" "$@"
             ;;
         a|all|"")
-            knife ssh $knifeopts "$query" -a ec2.public_hostname "${*:-interactive}"
+            knifessh "$query" "${*:-interactive}"
             ;;
         list)
             cat "$tmpfile"
