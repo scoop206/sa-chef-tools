@@ -2,7 +2,7 @@
 
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
-for c in $(git diff --name-only "$1" | grep ^cookbooks | cut -d/ -f2 | sort -u); do
+for c in $(git diff --name-only "$1" | grep -v 'metadata\.json$' | grep ^cookbooks | cut -d/ -f2 | sort -u); do
     knife cookbook upload "$c"
 done
 
