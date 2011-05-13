@@ -2,14 +2,16 @@
 
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
-while getopts 123456789Aak:lsv opt; do
+while getopts 123456789ATak:lstv opt; do
     case $opt in
         [1-9]) n="$opt";;
         A) n="${n:-all}"; query='*:*';;
+        T) n=tmux; query='*:*';;
         a) n=all;;
         k) knifeopts="$OPTARG";;
         l) n=list;;
         s) n=sequential;;
+        t) n=tmux;;
         v) verbose=1;;
     esac
 done
@@ -64,7 +66,7 @@ if knifeq "$query" >"$tmpfile" 2>/dev/null; then
     esac
     if [ -z "$n" ]; then
         nl "$tmpfile"
-        printf 'Node number, [a]ll, or [s]equential >> '; read n
+        printf 'Node number, [a]ll, [s]equential, or [t]mux >> '; read n
     fi
     case "$n" in
         [0-9]*)
@@ -79,6 +81,11 @@ if knifeq "$query" >"$tmpfile" 2>/dev/null; then
         s|sequential)
             for h in $(cat "$tmpfile"); do
                 vssh "$h" "$@"
+            done
+            ;;
+        t|tmux)
+            for h in $(cat "$tmpfile"); do
+                tmux split "ssh $h $*"
             done
             ;;
         *)
