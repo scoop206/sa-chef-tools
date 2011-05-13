@@ -1,5 +1,7 @@
 #!/bin/sh
 
 en() { orgs="$1"; shift; for org in ${orgs//,/ }; do ENV="$org" "$@"; done }
+nag() { en "${1%_*}" sa-ssh "${1##*_}"; }
+converge() { sa-ssh "$@" sudo chef-client; }
 
 wb() { git branch -a | grep "$*" | sed 's,remotes/,,'; }
