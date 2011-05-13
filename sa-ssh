@@ -41,7 +41,7 @@ title() {
 }
 
 knifeq() {
-    knife search node "$1" -a ec2.public_hostname -i | sort
+    knife search node "$1" -a ec2.public_hostname -i
 }
 
 knifessh() {
