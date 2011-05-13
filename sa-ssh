@@ -10,7 +10,7 @@ while getopts 123456789Aak:lsv opt; do
         k) knifeopts="$OPTARG";;
         l) n=list;;
         s) n=sequential;;
-        v) verbose=$1;;
+        v) verbose=1;;
     esac
 done
 shift $(($OPTIND - 1))
