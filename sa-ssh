@@ -85,7 +85,7 @@ if knifeq "$query" >"$tmpfile" 2>/dev/null; then
             ;;
         t|tmux)
             for h in $(cat "$tmpfile"); do
-                tmux split -d "ssh -t $h $*"
+                tmux split -d "ssh -t $h ${*:+$*; read}"
                 tmux select-layout main-vertical >/dev/null 2>&1
             done
             ;;
