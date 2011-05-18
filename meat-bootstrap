@@ -3,5 +3,5 @@
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
 while read inst hostname; do
-    knife bootstrap "$hostname" -r "$1" --sudo -x ubuntu -i "../keys/$ENV.pem" -d ubuntu10.10-gems-sonian -N "$inst"
+    knife bootstrap "$hostname" -N "$inst" -r "$1" -d ubuntu10.10-gems-sonian -x ubuntu -i "../keys/$ENV.pem" --sudo
 done
