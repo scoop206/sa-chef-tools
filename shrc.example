@@ -4,4 +4,5 @@ en() { orgs="$1"; shift; for org in ${orgs//,/ }; do ENV="$org" "$@"; done }
 nag() { en "${1%_*}" sa-ssh "${1##*_}"; }
 converge() { sa-ssh "$@" sudo chef-client; }
 
-wb() { git branch -a | grep "$*" | sed 's,remotes/,,'; }
+bgrep() { git branch -a | grep "$*" | sed 's,remotes/,,'; }
+breset() { git update-ref "refs/heads/$1" "origin/$1"; }
