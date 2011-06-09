@@ -1,0 +1,14 @@
+#!/bin/bash
+
+chart() {
+    echo '[from..to]' "$@"
+    for a in "$@"; do
+        echo -n "$a "
+        for b in "$@"; do
+            echo -n "$(git rev-list $a..$b | wc -l) "
+        done
+        echo
+    done
+}
+
+chart "$@" | column -t
