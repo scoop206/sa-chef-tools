@@ -1,0 +1,13 @@
+#!/bin/sh
+
+if [ "$1" = -v ]; then
+    verbose=1
+    shift
+fi
+
+orgs="$(echo "$1" | sed 's/,/ /g')"; shift
+
+for org in $orgs; do
+    test "$verbose" && echo "#### ENV=$org"
+    ENV="$org" "$@"
+done
