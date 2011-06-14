@@ -1,11 +1,18 @@
-#!/bin/sh
+#!/usr/bin/ruby
 
-export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
+require 'csv'
 
-creds="${DROPBOX_DIR:-$HOME/Dropbox}/Sonian Dev Ops/credentials.org"
-keys="$(awk "tolower(\$4) == \"$ENV\" { print \$6, \$8 }" "$creds")"
+org_name = ENV['ENV'] || File.basename(%x(git symbolic-ref -q HEAD 2>/dev/null).chomp)
+dropbox_dir = ENV['DROPBOX_DIR'] || "#{ENV['HOME']}/Dropbox"
+sonian_dir = ENV['SONIAN_DIR'] || "#{ENV['HOME']}/sonian"
 
-export AWS_ACCESS_KEY_ID="${keys% *}"
-export AWS_SECRET_ACCESS_KEY="${keys#* }"
+orgs = CSV.read("#{dropbox_dir}/Sonian Dev Ops/orgs.csv")
+creds = CSV.read("#{sonian_dir}/iam/credentials.csv")
 
-exec aws "$@"
+org_name, stack_type, email, region = orgs.find {|row| row[0] == org_name }
+account_id, email, username, key, secret = creds.find {|row| row[1] == email }
+
+ENV['AWS_ACCESS_KEY_ID'] = key
+ENV['AWS_SECRET_ACCESS_KEY'] = secret
+
+exec("aws", "--region=#{region}", *ARGV)
