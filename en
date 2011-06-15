@@ -14,7 +14,7 @@ done
 shift $(($OPTIND - 1))
 
 if [ "$pred" ]; then
-    orgs="$(awk -F, "NR > 1 && ($pred) { print \$1 }" "$orgs_file")"
+    orgs="$(awk -F, "$pred { print \$1 }" "$orgs_file")"
 else
     orgs="$(echo "$1" | sed 's/,/ /g')"; shift
 fi
