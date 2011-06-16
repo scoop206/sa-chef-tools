@@ -5,9 +5,9 @@ orgs_file="${DROPBOX_DIR:-$HOME/Dropbox}/Sonian Dev Ops/orgs.csv"
 while getopts adnpt: opt; do
     case $opt in
         a) pred="\$2";;
-        d) pred="\$2 == \"dead\"";;
-        n) pred="\$2 == \"non-prod\"";;
-        p) pred="\$2 ~ /^prod-/";;
+        d) pred="\$2 ~ /^dead/";;
+        n) pred="\$2 ~ /^non-prod/";;
+        p) pred="\$2 ~ /^prod/";;
         t) pred="\$2 == \"$OPTARG\"";;
     esac
 done
