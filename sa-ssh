@@ -2,10 +2,11 @@
 
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
-while getopts 123456789ATak:lstv opt; do
+while getopts 123456789ASTak:lstv opt; do
     case $opt in
         [1-9]) n="$opt";;
         A) n="${n:-all}"; query='*:*';;
+        S) n=sequential; query='*:*';;
         T) n=tmux; query='*:*';;
         a) n=all;;
         k) knifeopts="$OPTARG";;
