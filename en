@@ -1,19 +1,20 @@
 #!/bin/sh
 
 orgs_file="${DROPBOX_DIR:-$HOME/Dropbox}/Sonian Dev Ops/orgs.csv"
+pred="0"
 
-while getopts adnpt: opt; do
+while getopts ab:dnp opt; do
     case $opt in
-        a) pred="\$2";;
-        d) pred="\$2 ~ /^dead/";;
-        n) pred="\$2 ~ /^non-prod/";;
-        p) pred="\$2 ~ /^prod/";;
-        t) pred="\$2 == \"$OPTARG\"";;
+        a) pred="$pred || 1";;
+        b) pred="$pred || \$2 ~ /$OPTARG\$/";;
+        d) pred="$pred || \$2 ~ /^dead/";;
+        n) pred="$pred || \$2 ~ /^non-prod/";;
+        p) pred="$pred || \$2 ~ /^prod/";;
     esac
 done
 shift $(($OPTIND - 1))
 
-if [ "$pred" ]; then
+if [ "$pred" != "0" ]; then
     orgs="$(awk -F, "$pred { print \$1 }" "$orgs_file")"
 else
     orgs="$(echo "$1" | sed 's/,/ /g')"; shift
