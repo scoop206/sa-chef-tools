@@ -2,4 +2,4 @@
 
 query="$1"; shift
 
-knife exec -E "nodes.search('$query').each {|node| begin; $*; rescue; end }"
+knife exec -E "nodes.search('$query').each {|node| begin; $*; rescue => e; puts %{kex: #{node.name} failed: #{e}} end }"
