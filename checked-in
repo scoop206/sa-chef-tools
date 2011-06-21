@@ -1,0 +1,5 @@
+#!/bin/sh
+
+now="$(date +%s)"
+
+echo "ohai_time:[$(($now - $2)) TO $((now - $1))]"
