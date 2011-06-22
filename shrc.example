@@ -5,5 +5,5 @@ bgrep() { git branch -a | grep "$*" | sed 's,remotes/,,'; }
 breset() { git update-ref "refs/heads/$1" "origin/$1"; }
 bdel() { git branch -d "$1" && git push origin ":$1"; }
 unmerged() { git ls-files --unmerged | grep -v metadata.json | cut -f2 | sort -u; }
-euu() { e $(unmerged); }
+euu() { ${EDITOR:-vi} $(unmerged); }
 auu() { for i in $(unmerged); do fgrep -q '<<<<<<' "$i" || git add "$i"; done; git status --short; }
