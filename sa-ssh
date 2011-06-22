@@ -26,6 +26,10 @@ if [ -z "$query" ]; then
         mon|monitor|nagios) query='role:monitoring_server';;
         ws|web|website) query='role:webserver';;
         es|elastic|elasticsearch) query='role:elasticsearch_ebs';;
+        es0) query='role:elasticsearch_ebs AND role:search_0';;
+        es1) query='role:elasticsearch_ebs AND role:search_1';;
+        es2) query='role:elasticsearch_ebs AND role:search_2';;
+        es3) query='role:elasticsearch_ebs AND role:search_3';;
         rabbit|amqp) query='role:rabbitmq';;
         gs|gluster) query='role:gluster_server';;
         worker) query='role:safe_worker';;
