@@ -1,8 +1,8 @@
 #!/bin/sh
 
 case "$ENV" in
-    dev|dev1|devops|hax|meta|qa|ua|myoutlookonline|mindshift|webroot-au) log="/var/log/chef/client.log";;
-    *) log="/etc/sv/chef-client/log/main/current";;
+    123together|ibm*|rackspace) log="/etc/sv/chef-client/log/main/current";;
+    *) log="/var/log/chef/client.log";;
 esac
 
 sa-ssh -A "tac $log | sed '/INFO: Starting Chef Run/Q;/INFO:\|WARN:\|warning:/d' | tac | head"
