@@ -60,7 +60,7 @@ vssh() {
     ssh "$@"
 }
 
-title "sa-ssh: $query on $ENV"
+test -t 1 && title "sa-ssh: $query on $ENV"
 tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
 trap "rm -f '$tmpfile'" EXIT
 
