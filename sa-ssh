@@ -60,6 +60,15 @@ vssh() {
     ssh "$@"
 }
 
+tpane() {
+    if [ "$(tmux list-panes | wc -l)" -gt 5 ]; then
+        tmux new-window -d "$@"
+    else
+        tmux split -d "$@"
+        tmux select-layout main-vertical >/dev/null 2>&1
+    fi
+}
+
 test -t 1 && title "sa-ssh: $query on $ENV"
 tmpfile="$(mktemp -t sa-ssh.XXXXXX)"
 trap "rm -f '$tmpfile'" EXIT
@@ -90,8 +99,7 @@ if knifeq "$query" >"$tmpfile" 2>/dev/null; then
             ;;
         t|tmux)
             for h in $(cat "$tmpfile"); do
-                tmux split -d "ssh -t $h ${*:+$*; read}"
-                tmux select-layout main-vertical >/dev/null 2>&1
+                tpane "ssh -t $h ${*:+'$*'; read}"
             done
             ;;
         *)
