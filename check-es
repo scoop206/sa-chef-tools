@@ -18,6 +18,7 @@ end
 Chef::Knife.new.configure_chef
 
 rows, start, total = Chef::Search::Query.new.search(:node, "role:elasticsearch_ebs")
+rows.reject! {|node| !ARGV.include? node.elasticsearch.cluster } unless ARGV.empty?
 clusters = rows.group_by {|node| node.elasticsearch.cluster rescue node.app_environment }
 
 clusters.each do |cluster, nodes|
