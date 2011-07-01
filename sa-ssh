@@ -20,8 +20,9 @@ shift $(($OPTIND - 1))
 
 if [ -z "$query" ]; then
     case "$1" in
-        domU-*|ip-*) query="hostname:$1";;
         i-*) query="name:$1";;
+        domU-*|ip-*) query="hostname:$1";;
+        10.*) query="local_ipv4:$1";;
         lb) query='role:load_balancer';;
         mon|monitor|nagios) query='role:monitoring_server';;
         ws|web|website) query='role:webserver';;
