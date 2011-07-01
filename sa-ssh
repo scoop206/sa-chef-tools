@@ -31,6 +31,10 @@ if [ -z "$query" ]; then
         es1) query='role:elasticsearch_ebs AND role:search_1';;
         es2) query='role:elasticsearch_ebs AND role:search_2';;
         es3) query='role:elasticsearch_ebs AND role:search_3';;
+        safe0) query='role:safe AND role:search_0';;
+        safe1) query='role:safe AND role:search_1';;
+        safe2) query='role:safe AND role:search_2';;
+        safe3) query='role:safe AND role:search_3';;
         rabbit|amqp) query='role:rabbitmq';;
         gs|gluster) query='role:gluster_server';;
         worker) query='role:safe_worker';;
