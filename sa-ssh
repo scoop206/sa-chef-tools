@@ -94,7 +94,7 @@ if knifeq "$query" >"$tmpfile" 2>/dev/null; then
         a|all|"")
             knifessh "$query" "${*:-interactive}"
             ;;
-        list)
+        l|list)
             cat "$tmpfile"
             ;;
         s|sequential)
