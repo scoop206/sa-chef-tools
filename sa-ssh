@@ -85,7 +85,7 @@ trap "rm -f '$tmpfile'" EXIT
 if knifeq "$query" >"$tmpfile" 2>/dev/null; then
     case "$(grep -c . "$tmpfile")" in
         0) case "$n" in all|list|sequential|tmux);; *) echo 'Error: no nodes found' 1>&2;; esac; exit 1;;
-        1) n="${n:-1}";;
+        1) n=1;;
     esac
     if [ -z "$n" ]; then
         nl "$tmpfile"

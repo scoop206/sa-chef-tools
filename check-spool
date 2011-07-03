@@ -1,3 +1,3 @@
 #!/bin/sh
 
-sa-ssh mon 'ls /var/spool/nsca | wc -l; sudo wc -l /var/spool/nsca/batch.* 2>/dev/null'
+sa-ssh -a mon 'ls /var/spool/nsca | wc -l; sudo wc -l /var/spool/nsca/batch.* 2>/dev/null'
