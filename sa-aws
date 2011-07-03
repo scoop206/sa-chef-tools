@@ -12,7 +12,20 @@ creds = CSV.read("#{sonian_dir}/iam/credentials.csv")
 org_name, stack_type, email, region = orgs.find {|row| row[0] == org_name }
 account_id, email, username, key, secret = creds.find {|row| row[1] == email }
 
-ENV['AWS_ACCESS_KEY_ID'] = key
-ENV['AWS_SECRET_ACCESS_KEY'] = secret
+pem ="#{sonian_dir}/iam/#{email.gsub(/@.*/, '')}.pem"
+bin = File.basename($0)
 
-exec("aws", "--region=#{region}", *ARGV)
+case bin
+when 'sa-aws'
+  ENV['AWS_ACCESS_KEY_ID'] = key
+  ENV['AWS_SECRET_ACCESS_KEY'] = secret
+  exec('aws', "--region=#{region}", *ARGV)
+when 'sa-rds'
+  ENV['EC2_CERT'] = pem
+  ENV['EC2_PRIVATE_KEY'] = pem
+  ENV['EC2_REGION'] = region
+  exec('rds', *ARGV)
+else
+  STDERR.puts "I don't know how to run as #{bin}"
+  exit 2
+end
