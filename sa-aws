@@ -7,9 +7,14 @@ dropbox_dir = ENV['DROPBOX_DIR'] || "#{ENV['HOME']}/Dropbox"
 sonian_dir = ENV['SONIAN_DIR'] || "#{ENV['HOME']}/sonian"
 
 orgs = CSV.read("#{dropbox_dir}/Sonian Dev Ops/orgs.csv")
-creds = CSV.read("#{sonian_dir}/iam/credentials.csv")
+found_org_name, stack_type, email, region = orgs.find {|row| row[0] == org_name }
 
-org_name, stack_type, email, region = orgs.find {|row| row[0] == org_name }
+if email.nil?
+  puts "error: couldn't find env '#{org_name}'"
+  exit 1
+end
+
+creds = CSV.read("#{sonian_dir}/iam/credentials.csv")
 account_id, email, username, key, secret = creds.find {|row| row[1] == email }
 
 pem ="#{sonian_dir}/iam/#{email.gsub(/@.*/, '')}.pem"
