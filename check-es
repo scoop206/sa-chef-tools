@@ -11,7 +11,7 @@ def get_health(node)
   begin
     JSON.parse(`ssh #{node.ec2.public_hostname} curl -s http://localhost:9200/_cluster/health`)
   rescue => e
-    puts "#{node.name}: error parsing JSON: #{e.message}"
+    STDERR.puts "#{node.name}: error parsing JSON: #{e.message}"
     nil
   end
 end
