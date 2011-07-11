@@ -1,9 +1,9 @@
-nag() { en "${1%_*}" sa-ssh -v "${1##*_}"; }
+nag() { test "$1" && en "${1%_*}" sa-ssh -v "${1##*_}"; }
 converge() { sa-ssh "$@" sudo chef-client; }
 
 bgrep() { git branch -a | grep "$*" | sed 's,remotes/,,'; }
-breset() { git update-ref "refs/heads/$1" "origin/$1"; }
-bdel() { git branch -d "$1" && git push origin ":$1"; }
+breset() { for i; do git update-ref "refs/heads/$i" "origin/$i"; done; }
+bdel() { for i; do git branch -d "$i" && git push origin ":$i"; done; }
 unmerged() { git ls-files --unmerged | grep -v metadata.json | cut -f2 | sort -u; }
 euu() { ${EDITOR:-vi} $(unmerged); }
 auu() { for i in $(unmerged); do fgrep -q '<<<<<<' "$i" || git add "$i"; done; git status --short; }
