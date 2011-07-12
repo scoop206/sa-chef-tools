@@ -24,7 +24,7 @@ def report_health(clusters, keys)
         status = HighLine.new.color(es['status'], es['status'].to_sym)
         shard_types = %w{active active_primary relocating initializing unassigned}
         shard_info = shard_types.select {|t| es[t+'_shards'] > 0 }.map {|t| "#{es[t+'_shards']} #{t}" }
-        puts "#{cluster} (#{node_count} nodes) is #{status}: #{shard_info.join(', ')}"
+        puts "#{es['cluster_name']} (#{node_count} nodes) is #{status}: #{shard_info.join(', ')}"
       else
         puts keys.map {|k| es[k] }.join(' ')
       end
