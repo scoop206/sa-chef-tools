@@ -52,8 +52,12 @@ title() {
     printf "\033]0;$*\007"
 }
 
+parsejson() {
+    ruby -rjson -e 'JSON.parse(STDIN.read)["rows"].each {|n| puts n["ec2.public_hostname"]}'
+}
+
 knifeq() {
-    knife search node "$1" -a ec2.public_hostname -i
+    knife search node "$1" -a ec2.public_hostname -i -Fjson | parsejson
 }
 
 knifessh() {
