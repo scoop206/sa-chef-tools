@@ -2,11 +2,19 @@
 
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
+parsejson() {
+    ruby -rjson -e 'JSON.parse(STDIN.read)["rows"].each {|n| puts n["ec2.public_hostname"]}'
+}
+
+knifeq() {
+    knife search node "$1" -a ec2.public_hostname -i -Fjson | parsejson
+}
+
 case "$1" in
     add|remove) ;;
     *) echo "usage: force-deploy {add|remove}" 1>&2; exit 2;;
 esac
 
-for inst in $(knife search node 'role:*webserver' -i); do
+for inst in $(knifeq 'role:*webserver'); do
     knife node run_list "$1" $inst 'role[force_deploy]'
 done
