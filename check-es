@@ -32,7 +32,10 @@ def report_health(clusters, keys)
   end
 end
 
-Chef::Knife.new.configure_chef
+Chef::Knife.new.tap do |k|
+  k.config[:verbosity] = 0
+  k.configure_chef
+end
 
 options = {}
 OptionParser.new do |opts|
