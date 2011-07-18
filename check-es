@@ -18,7 +18,7 @@ end
 
 def report_health(clusters, keys)
   clusters.each do |cluster, nodes|
-    if es = get_health(nodes[rand(nodes.size)])
+    if es = get_health(nodes.sample)
       if keys.nil?
         node_count = "#{es['number_of_data_nodes']} + #{es['number_of_nodes'] - es['number_of_data_nodes']}"
         status = HighLine.new.color(es['status'], es['status'].to_sym)
