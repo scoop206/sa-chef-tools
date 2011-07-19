@@ -7,7 +7,7 @@ parsejson() {
 }
 
 knifeq() {
-    knife search node "$1" -a ec2.public_hostname -i -Fjson | parsejson
+    knife search node "$1" -a ec2.public_hostname -Fjson | parsejson
 }
 
 case "$1" in
