@@ -3,11 +3,11 @@
 export ENV="${ENV:-$(git symbolic-ref -q HEAD | sed s@refs/heads/@@)}"
 
 parsejson() {
-    ruby -rjson -e 'JSON.parse(STDIN.read)["rows"].each {|n| puts n["ec2.public_hostname"]}'
+    ruby -rjson -e 'JSON.parse(STDIN.read)["rows"].each {|n| puts n["id"]}'
 }
 
 knifeq() {
-    knife search node "$1" -a ec2.public_hostname -Fjson | parsejson
+    knife search node "$1" -a dummy -Fjson | parsejson
 }
 
 case "$1" in
