@@ -14,7 +14,7 @@ if email.nil?
   exit 1
 end
 
-creds = CSV.read("#{sonian_dir}/iam/credentials.csv")
+creds = CSV.read("#{sonian_dir}/keys/iam/credentials.csv")
 account_id, email, username, key, secret = creds.find {|row| row[1] == email }
 
 pem ="#{sonian_dir}/iam/#{email.gsub(/@.*/, '')}.pem"
