@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+# pd
+# returns an ec2.public_hostname when passed a server descriptor string
+# in pager duty alerts
+# e.g. something just went wrong on: rackspace_4-4-4-4
+# useage: ssh `pd rackspace_4-4-4-4`
+
+require 'rubygems'
+require 'json'
+
+if ARGV[0].nil?
+   puts "a string like <ENV>_ip-xxx-xxx-xxx-xxx is required"
+   exit
+end
+
+string = ARGV[0]
+env = /^(.*)_ip/.match(string)[1]
+ip = /ip-(.*)$/.match(string)[1].gsub('-','.')
+
+hostname = JSON.parse(`export ENV=#{env}; knife search node ipaddress:#{ip} -a ec2.public_hostname -F json`)["rows"].first["ec2.public_hostname"]
+
+puts hostname
+
+
